@@ -51,6 +51,10 @@ def load_configurations(spark: SparkSession, is_serverless: bool = False) -> Non
         spark.conf.set("default_streaming_dict", json.dumps(streaming_config))
         spark.conf.set("default_notification_dict", json.dumps(notification_config))
 
+        # if not is_serverless:
+        #     spark.conf.set("default_streaming_dict", json.dumps(streaming_config))
+        #     spark.conf.set("default_notification_dict", json.dumps(notification_config))
+
     except FileNotFoundError as e:
         raise RuntimeError(f"Spark config YAML file not found: {e}") from e
     except yaml.YAMLError as e:
@@ -106,7 +110,7 @@ def get_config_dict(
         # Check if running in serverless mode
         is_serverless = user_conf.get("spark.expectations.is.serverless", False) if user_conf else False
         
-        load_configurations(spark, is_serverless)
+        
         
         if is_serverless:
             # Use empty configurations for serverless
@@ -114,6 +118,7 @@ def get_config_dict(
             default_streaming_dict = {}
         else:
             # Parse both JSON configurations at once
+            load_configurations(spark, is_serverless)
             default_notification_dict_str = spark.conf.get("default_notification_dict")
             default_streaming_dict_str = spark.conf.get("default_streaming_dict")
             
