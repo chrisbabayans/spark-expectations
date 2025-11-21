@@ -82,7 +82,7 @@ def get_config_dict(
     ) -> Dict[str, Union[str, int, bool, Dict[str, str]]]:
         """Helper function to build configuration dictionary with type inference."""
         # Check if serverless mode
-        is_serverless_mode = user_conf.get("is_serverless", False) if user_conf else False
+        is_serverless_mode = user_conf.get("spark.expectations.is.serverless", False) if user_conf else False
         
         if user_conf:
             if is_serverless_mode:
@@ -104,7 +104,7 @@ def get_config_dict(
 
     try:
         # Check if running in serverless mode
-        is_serverless = user_conf.get("is_serverless", False) if user_conf else False
+        is_serverless = user_conf.get("spark.expectations.is.serverless", False) if user_conf else False
         
         load_configurations(spark, is_serverless)
         
