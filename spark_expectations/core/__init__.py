@@ -9,7 +9,7 @@ from pyspark.sql.session import SparkSession
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def load_configurations(spark: SparkSession, is_serverless: bool = False) -> None:
+def load_configurations(spark: SparkSession) -> None:
     """
     Load Spark configuration settings from a YAML file and apply them to the provided SparkSession.
 
@@ -23,13 +23,11 @@ def load_configurations(spark: SparkSession, is_serverless: bool = False) -> Non
 
     Args:
         spark (SparkSession): The SparkSession to apply configurations to.
-        is_serverless (bool): Whether running in serverless compute environment. Defaults to False.
 
     Raises:
         RuntimeError: If the configuration file is not found, cannot be parsed, or other errors occur.
     """
     try:
-        
         with open(f"{current_dir}/../config/spark-expectations-default-config.yaml", "r", encoding="utf-8") as cfg_file:
             config = yaml.safe_load(cfg_file)
         if config is None:
@@ -44,16 +42,10 @@ def load_configurations(spark: SparkSession, is_serverless: bool = False) -> Non
             elif key.startswith("spark.expectations."):
                 notification_config[key] = value
             else:
-                if not is_serverless:
-                    spark.conf.set(key, str(value))
-        
-        
+                spark.conf.set(key, str(value))
         spark.conf.set("default_streaming_dict", json.dumps(streaming_config))
         spark.conf.set("default_notification_dict", json.dumps(notification_config))
 
-        # if not is_serverless:
-        #     spark.conf.set("default_streaming_dict", json.dumps(streaming_config))
-        #     spark.conf.set("default_notification_dict", json.dumps(notification_config))
 
     except FileNotFoundError as e:
         raise RuntimeError(f"Spark config YAML file not found: {e}") from e
