@@ -179,7 +179,7 @@ class SparkExpectations:
         """
 
         def _except(func: Any) -> Any:
-            if not user_conf.get("is_serverless", False):
+            if user_conf.get("is_serverless", False):
                 print("Serverless mode",user_conf.get("is_serverless", False))
                 self.rules_df = self.rules_df.persist(StorageLevel.MEMORY_AND_DISK)                
             # variable used for enabling notification at different level
