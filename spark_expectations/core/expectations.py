@@ -147,7 +147,7 @@ class SparkExpectations:
         self._context.set_debugger_mode(self.debugger)
         self._context.set_dq_stats_table_name(self.stats_table)
         self._context.set_dq_detailed_stats_table_name(f"{self.stats_table}_detailed")
-        self.rules_df = self.rules_df.persist(StorageLevel.MEMORY_AND_DISK)
+        
 
     # TODO Add target_error_table_writer and stats_table_writer as parameters to this function so this takes precedence
     #  if user provides it
@@ -179,6 +179,8 @@ class SparkExpectations:
         """
 
         def _except(func: Any) -> Any:
+            if not user_conf.get("is_serverless", False):
+                self.rules_df = self.rules_df.persist(StorageLevel.MEMORY_AND_DISK)                
             # variable used for enabling notification at different level
             _default_notification_dict, _default_stats_streaming_dict = get_config_dict(self.spark, user_conf)
 
@@ -314,7 +316,7 @@ class SparkExpectations:
 
             min_priority_slack = user_config.se_notifications_min_priority_slack
 
-            self.reader.set_notification_param(user_conf)
+            self.reader.set_notification_param(_notification_dict)
             self._context.set_notification_on_start(_notification_on_start)
             self._context.set_notification_on_completion(_notification_on_completion)
             self._context.set_notification_on_fail(_notification_on_fail)
@@ -429,14 +431,7 @@ class SparkExpectations:
                             _input_count=_input_count,
                         )
 
-                        if _df.isStreaming:
-                            _log.info("Streaming dataframe detected. Only row_dq checks applicable.")
-                            if _source_agg_dq is True:
-                                _log.info("agg_dq expectations provided. Not applicable for streaming dataframe.")
-                            if _source_query_dq:
-                                _log.info("query_dq expectations provided. Not applicable for streaming dataframe.")
-
-                        if _source_agg_dq is True and not _df.isStreaming:
+                        if _source_agg_dq is True:
                             _log.info(
                                 "started processing data quality rules for agg level expectations on soure dataframe"
                             )
@@ -466,7 +461,7 @@ class SparkExpectations:
                                 "ended processing data quality rules for agg level expectations on source dataframe"
                             )
 
-                        if _source_query_dq is True and not _df.isStreaming:
+                        if _source_query_dq is True:
                             _log.info(
                                 "started processing data quality rules for query level expectations on soure dataframe"
                             )
@@ -546,7 +541,7 @@ class SparkExpectations:
                                 # )
                             _log.info("ended processing data quality rules for row level expectations")
 
-                        if _row_dq is True and _target_agg_dq is True and not _df.isStreaming:
+                        if _row_dq is True and _target_agg_dq is True:
                             _log.info(
                                 "started processing data quality rules for agg level expectations on final dataframe"
                             )
@@ -577,7 +572,7 @@ class SparkExpectations:
                                 "ended processing data quality rules for agg level expectations on final dataframe"
                             )
 
-                        if _row_dq is True and _target_query_dq is True and not _df.isStreaming:
+                        if _row_dq is True and _target_query_dq is True:
                             _log.info(
                                 "started processing data quality rules for query level expectations on final dataframe"
                             )
