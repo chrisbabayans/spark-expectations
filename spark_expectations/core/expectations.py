@@ -179,8 +179,8 @@ class SparkExpectations:
         """
 
         def _except(func: Any) -> Any:
-            if not user_conf.get("is_serverless", False):
-                print("Serverless mode",user_conf.get("is_serverless", False))
+            if not user_conf.get("spark.expectations.is.serverless", False):
+                print("Serverless mode",user_conf.get("spark.expectations.is.serverless", False))
                 self.rules_df = self.rules_df.persist(StorageLevel.MEMORY_AND_DISK)                
             # variable used for enabling notification at different level
             _default_notification_dict, _default_stats_streaming_dict = get_config_dict(self.spark, user_conf)
@@ -318,10 +318,8 @@ class SparkExpectations:
 
             min_priority_slack = user_config.se_notifications_min_priority_slack
 
-            if user_conf.get("is_serverless", False):
-                self.reader.set_notification_param(_default_notification_dict)
-            else:
-                self.reader.set_notification_param(_notification_dict)
+     
+            self.reader.set_notification_param(_notification_dict)
             self._context.set_notification_on_start(_notification_on_start)
             self._context.set_notification_on_completion(_notification_on_completion)
             self._context.set_notification_on_fail(_notification_on_fail)
