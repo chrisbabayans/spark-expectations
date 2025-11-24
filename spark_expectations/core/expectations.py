@@ -318,10 +318,7 @@ class SparkExpectations:
 
             min_priority_slack = user_config.se_notifications_min_priority_slack
 
-            if user_conf.get("spark.expectations.is.serverless", False):
-                self.reader.set_notification_param(_default_notification_dict)
-            else:
-                self.reader.set_notification_param(_default_notification_dict)
+            self.reader.set_notification_param(user_conf)
             self._context.set_notification_on_start(_notification_on_start)
             self._context.set_notification_on_completion(_notification_on_completion)
             self._context.set_notification_on_fail(_notification_on_fail)
