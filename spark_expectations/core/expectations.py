@@ -184,7 +184,7 @@ class SparkExpectations:
                 self.rules_df = self.rules_df.persist(StorageLevel.MEMORY_AND_DISK)                
             # variable used for enabling notification at different level
             _default_notification_dict, _default_stats_streaming_dict = get_config_dict(self.spark, user_conf)
-
+            _log.info("Default notification and streaming dict fetched successfully",_default_notification_dict,_default_stats_streaming_dict,user_conf)
 
             _default_notification_dict[
                 user_config.querydq_output_custom_table_name
@@ -321,7 +321,7 @@ class SparkExpectations:
             if user_conf.get("spark.expectations.is.serverless", False):
                 self.reader.set_notification_param(_default_notification_dict)
             else:
-                self.reader.set_notification_param(_notification_dict)
+                self.reader.set_notification_param(_default_notification_dict)
             self._context.set_notification_on_start(_notification_on_start)
             self._context.set_notification_on_completion(_notification_on_completion)
             self._context.set_notification_on_fail(_notification_on_fail)
