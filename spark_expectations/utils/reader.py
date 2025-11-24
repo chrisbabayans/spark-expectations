@@ -41,20 +41,7 @@ class SparkExpectationsReader:
                 )
             except Exception:
                 # Fallback for serverless environments
-                _default_notification_dict = {
-                    "spark.expectations.notifications.email.enabled": False,
-                    "spark.expectations.notifications.slack.enabled": False,
-                    "spark.expectations.notifications.teams.enabled": False,
-                    "spark.expectations.agg.dq.detailed.stats": False,
-                    "spark.expectations.query.dq.detailed.stats": False,
-                    "spark.expectations.notifications.on.start": False,
-                    "spark.expectations.notifications.on.completion": True,
-                    "spark.expectations.notifications.on.fail": True,
-                    "park.expectations.notifications.on.error.drop.exceeds.threshold.breach": False,
-                    "spark.expectations.notifications.on.rules.action.if.failed.set.ignore": False,
-                    "spark.expectations.job.metadata": "",
-                    "spark.expectations.notifications.slack.min.priority": "medium"
-                }
+                _default_notification_dict = {}
 
             _notification_dict: Dict[str, Union[str, int, bool, Dict[str, str]]] = (
                 {**_default_notification_dict, **notification} if notification else _default_notification_dict
