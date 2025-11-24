@@ -110,7 +110,7 @@ def get_config_dict(
             default_streaming_dict = {}
         else:
             # Parse both JSON configurations at once
-            load_configurations(spark, is_serverless)
+            load_configurations(spark)
             default_notification_dict_str = spark.conf.get("default_notification_dict")
             default_streaming_dict_str = spark.conf.get("default_streaming_dict")
             
