@@ -27,7 +27,7 @@ class SparkExpectationsReader:
 
     def set_notification_param(
         self,
-        _notification_dict: Optional[Dict[str, Union[int, str, bool, Dict[str, str]]]] = None,
+        notification: Optional[Dict[str, Union[int, str, bool, Dict[str, str]]]] = None,
     ) -> None:
         """
         This function supports to read notifications configurations
@@ -35,10 +35,13 @@ class SparkExpectationsReader:
 
         """
         try:
-            # _default_notification_dict: Dict[str, Union[str, int, bool, Dict[str, str]]] = json.loads(
-            #     self.spark.conf.get("default_notification_dict")
-            # )
+            _default_notification_dict: Dict[str, Union[str, int, bool, Dict[str, str]]] = json.loads(
+                self.spark.conf.get("default_notification_dict")
+            )
 
+            _notification_dict: Dict[str, Union[str, int, bool, Dict[str, str]]] = (
+                {**_default_notification_dict, **notification} if notification else _default_notification_dict
+            )
 
             if _notification_dict.get(user_config.se_enable_obs_dq_report_result) is True:
                 self._context.set_enable_obs_dq_report_result(True)
